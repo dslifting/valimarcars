@@ -1,11 +1,102 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bg">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0; url=car_form.html">
-    <title>ValimarCars - Нов ремонт</title>
+    <title>ValimarCars - Автосервиз</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Tesseract.js за OCR -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.1.1/dist/tesseract.min.js"></script>
+    <!-- SheetJS за Excel -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 </head>
 <body>
-    <p>Пренасочване към <a href="car_form.html">Нов ремонт</a>...</p>
+    <header>
+        <img src="assets/ferrari_logo.png" alt="Ferrari Logo">
+        <span>ValimarCars</span>
+    </header>
+
+    <nav>
+        <button onclick="showTab('new')">Нов ремонт</button>
+        <button onclick="showTab('history')">История</button>
+    </nav>
+
+    <main>
+        <!-- Нов ремонт -->
+        <section id="new" class="tab active">
+            <h2>Нов ремонт</h2>
+            <form id="repairForm">
+                <label>Дата:</label>
+                <input type="date" id="date" required>
+                
+                <label>Рег. номер:</label>
+                <input type="text" id="regNumber" required>
+
+                <label>VIN:</label>
+                <input type="text" id="vin">
+
+                <label>Км:</label>
+                <input type="number" id="km" required>
+
+                <label>Марка и модел:</label>
+                <input type="text" id="brandModel">
+
+                <label>Име на механик:</label>
+                <input type="text" id="mechanic">
+
+                <label>Услуги / ремонти (избери):</label>
+                <select id="services" multiple>
+                    <option>Смяна гуми зимни/летни</option>
+                    <option>Смяна масло ДВГ</option>
+                    <option>Смяна масло СКОРОСТНА КУТИЯ</option>
+                    <option>Смяна масло ДИФ</option>
+                    <option>Въздушен филтър</option>
+                    <option>Маслен филтър</option>
+                    <option>Горивен филтър</option>
+                    <option>Филтър купе</option>
+                    <option>Филтър климатик</option>
+                    <option>Фреон</option>
+                    <option>Проверка климатик</option>
+                    <option>Друго 1</option>
+                    <option>Друго 2</option>
+                    <option>Друго 3</option>
+                    <option>Друго 4</option>
+                    <option>Друго 5</option>
+                </select>
+
+                <label>Бележки / свободен текст:</label>
+                <textarea id="notes"></textarea>
+
+                <label>Сканиран формуляр (може няколко):</label>
+                <input type="file" id="scanFiles" accept=".jpg,.png" multiple>
+
+                <button type="button" onclick="recognizeMultiple()">Автоматично попълване</button>
+                <button type="button" onclick="saveRepair()">Запази ремонт</button>
+            </form>
+        </section>
+
+        <!-- История -->
+        <section id="history" class="tab">
+            <h2>История</h2>
+            <button onclick="exportToExcel()">Експорт в Excel</button>
+            <table id="historyTable">
+                <thead>
+                    <tr>
+                        <th>Дата</th>
+                        <th>Рег. номер</th>
+                        <th>VIN</th>
+                        <th>Км</th>
+                        <th>Марка/Модел</th>
+                        <th>Механик</th>
+                        <th>Услуги</th>
+                        <th>Файлове</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
 </body>
 </html>
