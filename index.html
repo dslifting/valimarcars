@@ -1,127 +1,117 @@
 <!DOCTYPE html>
 <html lang="bg">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ValimarCars</title>
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #EDEDED; /* Crayon-like светъл фон */
-        margin: 0;
-        padding: 0;
-    }
-    header {
-        background-color: #D40000; /* Ferrari red header */
-        color: white;
-        padding: 20px;
-        font-size: 24px;
-        text-align: center;
-        font-weight: bold;
-    }
-    main {
-        padding: 20px;
-    }
-    label {
-        font-weight: bold;
-    }
-    input, textarea {
-        font-size: 16px;
-        padding: 5px;
-        margin-bottom: 10px;
-        width: 100%;
-        box-sizing: border-box;
-    }
-    #servicesCheckboxes label {
-        font-weight: normal;
-    }
-    button {
-        padding: 10px 20px;
-        font-size: 18px;
-        margin-top: 10px;
-        cursor: pointer;
-    }
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-    }
-    th, td {
-        border: 1px solid #aaa;
-        padding: 5px;
-        text-align: left;
-    }
-    th {
-        background-color: #f0f0f0;
-    }
-</style>
+    <meta charset="UTF-8">
+    <title>ValimarCars</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #F5F5F5; margin:0; padding:0; }
+        header { background:#E10600; color:white; padding:20px; text-align:center; font-size:2em; }
+        nav button { margin:5px; padding:10px 20px; font-size:1em; cursor:pointer; }
+        form { background:white; padding:20px; margin:20px; border-radius:10px; }
+        input, select, textarea { width:100%; padding:10px; margin:5px 0; font-size:1em; }
+        table { width:100%; border-collapse: collapse; margin-top:20px; }
+        th, td { border:1px solid #ddd; padding:10px; text-align:left; }
+        th { background:#333; color:white; }
+        .service-checkbox { margin-right:10px; }
+        a { color: #E10600; text-decoration:none; }
+    </style>
 </head>
 <body>
-<header>ValimarCars</header>
-<main>
-    <h2>Нов ремонт</h2>
-    <form id="repairForm">
-        <label>Дата:</label>
-        <input type="date" id="date" required>
+    <header>ValimarCars</header>
 
-        <label>Км:</label>
-        <input type="number" id="km" required>
+    <nav>
+        <button onclick="showSection('home')">Начало</button>
+        <button onclick="showSection('newRepair')">Нов ремонт</button>
+        <button onclick="showSection('history')">История</button>
+        <button onclick="showSection('reports')">Справки</button>
+    </nav>
 
-        <label>Марка и модел:</label>
-        <input type="text" id="brandModel">
+    <div id="home" style="display:none; padding:20px;">
+        <h2>Добре дошли в ValimarCars</h2>
+        <p>Изберете функция от менюто.</p>
+    </div>
 
-        <label>Рег. номер:</label>
-        <input type="text" id="regNumber">
+    <div id="newRepair">
+        <form id="repairForm">
+            <h3>Нов ремонт</h3>
+            <label>Дата:</label>
+            <input type="date" id="date" required>
+            <label>Километри:</label>
+            <input type="number" id="km" required>
+            <label>Марка и модел:</label>
+            <input type="text" id="brandModel">
+            <label>Рег. номер:</label>
+            <input type="text" id="regNumber">
+            <label>VIN:</label>
+            <input type="text" id="vin">
+            <label>Механик:</label>
+            <input type="text" id="mechanic">
+            <label>Бележки:</label>
+            <textarea id="notes"></textarea>
 
-        <label>VIN:</label>
-        <input type="text" id="vin">
+            <h4>Услуги</h4>
+            <div>
+                <label><input type="checkbox" class="service-checkbox" value="Смяна гуми">Смяна на гуми</label>
+                <label><input type="checkbox" class="service-checkbox" value="Смяна масла ДВГ">Смяна на масло ДВГ</label>
+                <label><input type="checkbox" class="service-checkbox" value="Смяна масла СКОРОСТНА КУТИЯ">Смяна на масло СКОРОСТНА КУТИЯ</label>
+                <label><input type="checkbox" class="service-checkbox" value="Смяна масла ДИФ">Смяна на масло ДИФ</label>
+                <label><input type="checkbox" class="service-checkbox" value="Въздушен филтър">Въздушен филтър</label>
+                <label><input type="checkbox" class="service-checkbox" value="Маслен филтър">Маслен филтър</label>
+                <label><input type="checkbox" class="service-checkbox" value="Горивен филтър">Горивен филтър</label>
+                <label><input type="checkbox" class="service-checkbox" value="Филтър купе">Филтър купе</label>
+                <label><input type="checkbox" class="service-checkbox" value="Филтър климатик">Филтър климатик</label>
+                <label><input type="checkbox" class="service-checkbox" value="Фреон">Фреон</label>
+                <label><input type="checkbox" class="service-checkbox" value="Проверка климатик">Проверка на климатик</label>
+                <!-- 15 празни за попълване -->
+            </div>
 
-        <label>Механик:</label>
-        <input type="text" id="mechanic">
+            <label>Качване на сканиран формуляр (PDF/JPG):</label>
+            <input type="file" id="scanFile" accept=".pdf,.jpg,.jpeg,.png">
 
-        <label>Услуги / ремонти:</label>
-        <div id="servicesCheckboxes">
-            <label><input type="checkbox" value="Смяна гуми зимни/летни"> Смяна гуми зимни/летни</label><br>
-            <label><input type="checkbox" value="Смяна масло ДВГ"> Смяна масло ДВГ</label><br>
-            <label><input type="checkbox" value="Смяна масло СКОРОСТНА КУТИЯ"> Смяна масло СКОРОСТНА КУТИЯ</label><br>
-            <label><input type="checkbox" value="Смяна масло ДИФ"> Смяна масло ДИФ</label><br>
-            <label><input type="checkbox" value="Въздушен филтър"> Въздушен филтър</label><br>
-            <label><input type="checkbox" value="Маслен филтър"> Маслен филтър</label><br>
-            <label><input type="checkbox" value="Горивен филтър"> Горивен филтър</label><br>
-            <label><input type="checkbox" value="Филтър купе"> Филтър купе</label><br>
-            <label><input type="checkbox" value="Филтър климатик"> Филтър климатик</label><br>
-            <label><input type="checkbox" value="Фреон"> Фреон</label><br>
-            <label><input type="checkbox" value="Проверка климатик"> Проверка климатик</label><br>
-            <label><input type="checkbox" value="Друго 1"> Друго 1</label><br>
-            <label><input type="checkbox" value="Друго 2"> Друго 2</label><br>
-            <label><input type="checkbox" value="Друго 3"> Друго 3</label><br>
-            <label><input type="checkbox" value="Друго 4"> Друго 4</label><br>
-            <label><input type="checkbox" value="Друго 5"> Друго 5</label><br>
-        </div>
+            <button type="submit">Запази ремонт</button>
+        </form>
+    </div>
 
-        <label>Бележки:</label>
-        <textarea id="notes"></textarea>
+    <div id="history" style="display:none; padding:20px;">
+        <h3>История на ремонти</h3>
+        <table id="historyTable">
+            <thead>
+                <tr>
+                    <th>Дата</th>
+                    <th>Рег. номер</th>
+                    <th>VIN</th>
+                    <th>Км</th>
+                    <th>Марка/Модел</th>
+                    <th>Механик</th>
+                    <th>Услуги</th>
+                    <th>Бележки</th>
+                    <th>Формуляр</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
 
-        <button type="submit">Запази ремонт</button>
-    </form>
+    <div id="reports" style="display:none; padding:20px;">
+        <h3>Справки по ремонти</h3>
+        <table id="reportsTable">
+            <thead>
+                <tr>
+                    <th>Дата</th>
+                    <th>Рег. номер</th>
+                    <th>VIN</th>
+                    <th>Км</th>
+                    <th>Марка/Модел</th>
+                    <th>Механик</th>
+                    <th>Услуги</th>
+                    <th>Бележки</th>
+                    <th>Формуляр</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
 
-    <h2>История</h2>
-    <table id="historyTable">
-        <thead>
-            <tr>
-                <th>Дата</th>
-                <th>Рег. номер</th>
-                <th>VIN</th>
-                <th>Км</th>
-                <th>Марка/Модел</th>
-                <th>Механик</th>
-                <th>Услуги</th>
-                <th>Бележки</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
-</main>
-<script src="app.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
