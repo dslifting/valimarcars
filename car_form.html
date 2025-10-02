@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ValimarCars - Нов ремонт</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/app.js" defer></script>
+</head>
+<body>
+<header class="header">
+    <h1>ValimarCars - Нов ремонт</h1>
+    <nav>
+        <a href="index.html">Начало</a>
+        <a href="history.html">История</a>
+    </nav>
+</header>
+
+<main>
+    <section class="form-section">
+        <h2>Формуляр за автомобил</h2>
+
+        <!-- Търсачка -->
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Търсене по регистрационен номер или VIN" />
+            <button onclick="searchCar()">Търси</button>
+        </div>
+
+        <form id="carForm">
+            <fieldset>
+                <legend>Данни за автомобила</legend>
+                <label>Марка, модел: <input type="text" id="brandModel" required></label>
+                <label>Година: <input type="number" id="year"></label>
+                <label>Рег. №: <input type="text" id="regNumber" required></label>
+                <label>Км: <input type="number" id="km" required></label>
+                <label>VIN: <input type="text" id="vin"></label>
+                <label>Обем на двигател: <input type="text" id="engineCapacity"></label>
+                <label>Мощност: <input type="text" id="power"></label>
+                <label>Гориво:
+                    <select id="fuel">
+                        <option value="бензин">Бензин</option>
+                        <option value="дизел">Дизел</option>
+                        <option value="газ">Газ</option>
+                        <option value="електричество">Ел.</option>
+                    </select>
+                </label>
+            </fieldset>
+
+            <fieldset>
+                <legend>Ремонти / услуги</legend>
+                <label><input type="checkbox" name="service" value="Маслен филтър"> Маслен филтър</label>
+                <label><input type="checkbox" name="service" value="Въздушен филтър"> Въздушен филтър</label>
+                <label><input type="checkbox" name="service" value="Горивен филтър"> Горивен филтър</label>
+                <label><input type="checkbox" name="service" value="Филтър купе"> Филтър купе</label>
+                <label><input type="checkbox" name="service" value="Диагностика"> Диагностика</label>
+                <label><input type="checkbox" name="service" value="Смяна гуми"> Смяна гуми</label>
+                <label><input type="checkbox" name="service" value="Проверка климатик"> Проверка климатик</label>
+                <label>Други ремонти / бележки:
+                    <textarea id="otherNotes"></textarea>
+                </label>
+            </fieldset>
+
+            <!-- Сканиран файл -->
+            <fieldset>
+                <legend>Сканиране на формуляр</legend>
+                <input type="file" id="scanFile" accept=".pdf,.jpg,.png">
+                <button type="button" onclick="saveScan()">Запази сканираното</button>
+            </fieldset>
+
+            <fieldset>
+                <legend>Механик</legend>
+                <input type="text" id="mechanic" placeholder="Име на механик">
+            </fieldset>
+
+            <button type="submit">Запази данните</button>
+        </form>
+    </section>
+</main>
+
+<footer>
+    <p>Автор: Милена Борисова | Email: milenaborisova011@gmail.com | Всички права запазени © 2025</p>
+</footer>
+</body>
+</html>
