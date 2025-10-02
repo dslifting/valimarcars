@@ -21,7 +21,6 @@ form.addEventListener('submit', e => {
     const notes = document.getElementById('notes').value;
     const services = Array.from(document.querySelectorAll('.service-checkbox:checked')).map(s => s.value);
 
-    // Файл
     const fileInput = document.getElementById('scanFile');
     let fileName = '';
     if (fileInput.files.length > 0) {
@@ -87,9 +86,47 @@ function renderReports() {
     });
 }
 
+// Функция за сваляне на сканиран файл
 function downloadFile(fileName) {
     alert('Файлът ' + fileName + ' е наличен за сваляне (тъй като е client-side, може да се изтегли само локално).');
 }
+
+// **Експорт в CSV**
+function exportCSV() {
+    if (repairHistory.length === 0) {
+        alert("Няма записи за експортиране.");
+        return;
+    }
+    const headers = ["Дата","Рег. номер","VIN","Км","Марка/Модел","Механик","Услуги","Бележки","Формуляр"];
+    const csvRows = [
+        headers.join(","),
+        ...repairHistory.map(r => [
+            r.date,
+            r.regNumber,
+            r.vin,
+            r.km,
+            `"${r.brandModel}"`,
+            `"${r.mechanic}"`,
+            `"${r.services.join('; ')}"`,
+            `"${r.notes}"`,
+            r.scanFileName
+        ].join(","))
+    ];
+    const csvContent = csvRows.join("\n");
+    const blob = new Blob([csvContent], {type: 'text/csv'});
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'ValimarCars_Repairs.csv';
+    link.click();
+}
+
+// Добавяме бутон за CSV в менюто
+const reportsSection = document.getElementById('reports');
+const exportBtn = document.createElement('button');
+exportBtn.textContent = "Експорт в Excel/CSV";
+exportBtn.style.marginTop = "10px";
+exportBtn.onclick = exportCSV;
+reportsSection.insertBefore(exportBtn, reportsSection.firstChild);
 
 // Показваме "Нов ремонт" по подразбиране
 showSection('newRepair');
