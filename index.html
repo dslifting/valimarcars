@@ -1,102 +1,127 @@
 <!DOCTYPE html>
 <html lang="bg">
 <head>
-    <meta charset="UTF-8">
-    <title>ValimarCars - Автосервиз</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- Tesseract.js за OCR -->
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.1.1/dist/tesseract.min.js"></script>
-    <!-- SheetJS за Excel -->
-    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ValimarCars</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #EDEDED; /* Crayon-like светъл фон */
+        margin: 0;
+        padding: 0;
+    }
+    header {
+        background-color: #D40000; /* Ferrari red header */
+        color: white;
+        padding: 20px;
+        font-size: 24px;
+        text-align: center;
+        font-weight: bold;
+    }
+    main {
+        padding: 20px;
+    }
+    label {
+        font-weight: bold;
+    }
+    input, textarea {
+        font-size: 16px;
+        padding: 5px;
+        margin-bottom: 10px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    #servicesCheckboxes label {
+        font-weight: normal;
+    }
+    button {
+        padding: 10px 20px;
+        font-size: 18px;
+        margin-top: 10px;
+        cursor: pointer;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    th, td {
+        border: 1px solid #aaa;
+        padding: 5px;
+        text-align: left;
+    }
+    th {
+        background-color: #f0f0f0;
+    }
+</style>
 </head>
 <body>
-    <header>
-        <img src="assets/ferrari_logo.png" alt="Ferrari Logo">
-        <span>ValimarCars</span>
-    </header>
+<header>ValimarCars</header>
+<main>
+    <h2>Нов ремонт</h2>
+    <form id="repairForm">
+        <label>Дата:</label>
+        <input type="date" id="date" required>
 
-    <nav>
-        <button onclick="showTab('new')">Нов ремонт</button>
-        <button onclick="showTab('history')">История</button>
-    </nav>
+        <label>Км:</label>
+        <input type="number" id="km" required>
 
-    <main>
-        <!-- Нов ремонт -->
-        <section id="new" class="tab active">
-            <h2>Нов ремонт</h2>
-            <form id="repairForm">
-                <label>Дата:</label>
-                <input type="date" id="date" required>
-                
-                <label>Рег. номер:</label>
-                <input type="text" id="regNumber" required>
+        <label>Марка и модел:</label>
+        <input type="text" id="brandModel">
 
-                <label>VIN:</label>
-                <input type="text" id="vin">
+        <label>Рег. номер:</label>
+        <input type="text" id="regNumber">
 
-                <label>Км:</label>
-                <input type="number" id="km" required>
+        <label>VIN:</label>
+        <input type="text" id="vin">
 
-                <label>Марка и модел:</label>
-                <input type="text" id="brandModel">
+        <label>Механик:</label>
+        <input type="text" id="mechanic">
 
-                <label>Име на механик:</label>
-                <input type="text" id="mechanic">
+        <label>Услуги / ремонти:</label>
+        <div id="servicesCheckboxes">
+            <label><input type="checkbox" value="Смяна гуми зимни/летни"> Смяна гуми зимни/летни</label><br>
+            <label><input type="checkbox" value="Смяна масло ДВГ"> Смяна масло ДВГ</label><br>
+            <label><input type="checkbox" value="Смяна масло СКОРОСТНА КУТИЯ"> Смяна масло СКОРОСТНА КУТИЯ</label><br>
+            <label><input type="checkbox" value="Смяна масло ДИФ"> Смяна масло ДИФ</label><br>
+            <label><input type="checkbox" value="Въздушен филтър"> Въздушен филтър</label><br>
+            <label><input type="checkbox" value="Маслен филтър"> Маслен филтър</label><br>
+            <label><input type="checkbox" value="Горивен филтър"> Горивен филтър</label><br>
+            <label><input type="checkbox" value="Филтър купе"> Филтър купе</label><br>
+            <label><input type="checkbox" value="Филтър климатик"> Филтър климатик</label><br>
+            <label><input type="checkbox" value="Фреон"> Фреон</label><br>
+            <label><input type="checkbox" value="Проверка климатик"> Проверка климатик</label><br>
+            <label><input type="checkbox" value="Друго 1"> Друго 1</label><br>
+            <label><input type="checkbox" value="Друго 2"> Друго 2</label><br>
+            <label><input type="checkbox" value="Друго 3"> Друго 3</label><br>
+            <label><input type="checkbox" value="Друго 4"> Друго 4</label><br>
+            <label><input type="checkbox" value="Друго 5"> Друго 5</label><br>
+        </div>
 
-             <label>Услуги / ремонти:</label>
-<div id="servicesCheckboxes">
-    <label><input type="checkbox" value="Смяна гуми зимни/летни"> Смяна гуми зимни/летни</label><br>
-    <label><input type="checkbox" value="Смяна масло ДВГ"> Смяна масло ДВГ</label><br>
-    <label><input type="checkbox" value="Смяна масло СКОРОСТНА КУТИЯ"> Смяна масло СКОРОСТНА КУТИЯ</label><br>
-    <label><input type="checkbox" value="Смяна масло ДИФ"> Смяна масло ДИФ</label><br>
-    <label><input type="checkbox" value="Въздушен филтър"> Въздушен филтър</label><br>
-    <label><input type="checkbox" value="Маслен филтър"> Маслен филтър</label><br>
-    <label><input type="checkbox" value="Горивен филтър"> Горивен филтър</label><br>
-    <label><input type="checkbox" value="Филтър купе"> Филтър купе</label><br>
-    <label><input type="checkbox" value="Филтър климатик"> Филтър климатик</label><br>
-    <label><input type="checkbox" value="Фреон"> Фреон</label><br>
-    <label><input type="checkbox" value="Проверка климатик"> Проверка климатик</label><br>
-    <label><input type="checkbox" value="Друго 1"> Друго 1</label><br>
-    <label><input type="checkbox" value="Друго 2"> Друго 2</label><br>
-    <label><input type="checkbox" value="Друго 3"> Друго 3</label><br>
-    <label><input type="checkbox" value="Друго 4"> Друго 4</label><br>
-    <label><input type="checkbox" value="Друго 5"> Друго 5</label><br>
-</div>
+        <label>Бележки:</label>
+        <textarea id="notes"></textarea>
 
-                <label>Бележки / свободен текст:</label>
-                <textarea id="notes"></textarea>
+        <button type="submit">Запази ремонт</button>
+    </form>
 
-                <label>Сканиран формуляр (може няколко):</label>
-                <input type="file" id="scanFiles" accept=".jpg,.png" multiple>
-
-                <button type="button" onclick="recognizeMultiple()">Автоматично попълване</button>
-                <button type="button" onclick="saveRepair()">Запази ремонт</button>
-            </form>
-        </section>
-
-        <!-- История -->
-        <section id="history" class="tab">
-            <h2>История</h2>
-            <button onclick="exportToExcel()">Експорт в Excel</button>
-            <table id="historyTable">
-                <thead>
-                    <tr>
-                        <th>Дата</th>
-                        <th>Рег. номер</th>
-                        <th>VIN</th>
-                        <th>Км</th>
-                        <th>Марка/Модел</th>
-                        <th>Механик</th>
-                        <th>Услуги</th>
-                        <th>Файлове</th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-        </section>
-    </main>
-
-    <script src="app.js"></script>
+    <h2>История</h2>
+    <table id="historyTable">
+        <thead>
+            <tr>
+                <th>Дата</th>
+                <th>Рег. номер</th>
+                <th>VIN</th>
+                <th>Км</th>
+                <th>Марка/Модел</th>
+                <th>Механик</th>
+                <th>Услуги</th>
+                <th>Бележки</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</main>
+<script src="app.js"></script>
 </body>
 </html>
