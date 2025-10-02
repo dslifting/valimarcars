@@ -1,113 +1,81 @@
-// app.js - logic for ValimarCars web app
+// ==== app.js ====
+let cars = JSON.parse(localStorage.getItem('cars')) || [];
 
-let records = JSON.parse(localStorage.getItem('records') || '[]');
-let files = JSON.parse(localStorage.getItem('files') || '{}');
-
-const form = document.getElementById('vehicle-form');
-const recordsList = document.getElementById('records-list');
-const searchInput = document.getElementById('search');
-
-function saveToStorage() {
-  localStorage.setItem('records', JSON.stringify(records));
-  localStorage.setItem('files', JSON.stringify(files));
+function generateFileName(regNumber) {
+    const date = new Date();
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+    const existing = cars.filter(c => c.regNumber === regNumber).length + 1;
+    return `${yyyy}-${mm}-${dd}-${regNumber}-${existing}`;
 }
 
-form.addEventListener('submit', async function(e) {
-  e.preventDefault();
+document.getElementById('carForm')?.addEventListener('submit', function(e){
+    e.preventDefault();
+    const carData = {
+        brandModel: document.getElementById('brandModel').value,
+        year: document.getElementById('year').value,
+        regNumber: document.getElementById('regNumber').value.replace(/\s+/g, ''),
+        km: document.getElementById('km').value,
+        vin: document.getElementById('vin').value,
+        engineCapacity: document.getElementById('engineCapacity').value,
+        power: document.getElementById('power').value,
+        fuel: document.getElementById('fuel').value,
+        services: Array.from(document.querySelectorAll('input[name="service"]:checked')).map(el => el.value),
+        otherNotes: document.getElementById('otherNotes').value,
+        mechanic: document.getElementById('mechanic').value,
+        scans: []
+    };
 
-  const regNumber = document.getElementById('regNumber').value.trim().toUpperCase();
-  const vin = document.getElementById('vin').value.trim().toUpperCase();
-  const km = document.getElementById('km').value.trim();
-  const mechanic = document.getElementById('mechanic').value.trim();
-  const services = Array.from(document.getElementById('services').selectedOptions).map(o => o.text);
-  const notes = document.getElementById('notes').value.trim();
-  const fileInput = document.getElementById('formFile');
-
-  if (!regNumber) {
-    alert('Registration number is required');
-    return;
-  }
-  if (!km) {
-    alert('Kilometers are required');
-    return;
-  }
-
-  // determine next index for this regNumber
-  const existingForReg = records.filter(r => r.regNumber === regNumber);
-  const index = existingForReg.length + 1;
-  const date = new Date().toISOString().split('T')[0];
-  let savedFileName = null;
-
-  if (fileInput.files && fileInput.files[0]) {
-    const f = fileInput.files[0];
-    const cleaned = f.name.replace(/\s+/g, '_');
-    savedFileName = `${date}-${regNumber}-${index}-${cleaned}`;
-    const base64 = await readFileAsDataURL(f);
-    files[savedFileName] = { name: savedFileName, dataUrl: base64, mime: f.type };
-  }
-
-  const record = {
-    id: Date.now().toString() + Math.random().toString(36).slice(2,8),
-    regNumber,
-    vin,
-    km,
-    mechanic,
-    services,
-    notes,
-    date,
-    file: savedFileName
-  };
-
-  records.push(record);
-  saveToStorage();
-  displayRecords();
-  form.reset();
-});
-
-function readFileAsDataURL(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
-
-function displayRecords() {
-  const filter = (searchInput.value || '').trim().toUpperCase();
-  recordsList.innerHTML = '';
-
-  const filtered = records
-    .filter(r => {
-      if (!filter) return true;
-      return r.regNumber.includes(filter) || (r.vin || '').includes(filter);
-    })
-    .sort((a,b) => {
-      if (a.date === b.date) return b.id.localeCompare(a.id);
-      return new Date(b.date) - new Date(a.date);
-    });
-
-  filtered.forEach(r => {
-    const div = document.createElement('div');
-    div.className = 'record';
-
-    let fileHtml = 'None';
-    if (r.file && files[r.file]) {
-      fileHtml = `<a href="${files[r.file].dataUrl}" download="${files[r.file].name}">Download ${files[r.file].name}</a>`;
+    const scanFile = document.getElementById('scanFile').files[0];
+    if(scanFile){
+        const fileName = generateFileName(carData.regNumber);
+        carData.scans.push({
+            name: fileName,
+            originalName: scanFile.name,
+            type: scanFile.type
+        });
+        alert(`Файлът ще се запази като: ${fileName}`);
     }
 
-    div.innerHTML = `
-      <strong>${r.regNumber}${r.vin ? ' (' + r.vin + ')' : ''}</strong>
-      <div>${r.date} — ${r.km} km — Mechanic: ${r.mechanic || '-'}</div>
-      <div>Services: ${r.services.join(', ') || '-'}</div>
-      <div>Notes: ${r.notes || '-'}</div>
-      <div>File: ${fileHtml}</div>
-    `;
-    recordsList.appendChild(div);
-  });
+    const existingIndex = cars.findIndex(c => c.vin === carData.vin || c.regNumber === carData.regNumber);
+    if(existingIndex >= 0){
+        cars[existingIndex].scans.push(...carData.scans);
+        cars[existingIndex].services.push(...carData.services);
+    } else {
+        cars.push(carData);
+    }
+
+    localStorage.setItem('cars', JSON.stringify(cars));
+    alert('Данните са записани успешно!');
+    document.getElementById('carForm').reset();
+});
+
+function searchCar(){
+    const query = document.getElementById('searchInput').value.replace(/\s+/g,'').toLowerCase();
+    const result = cars.find(c => c.regNumber.toLowerCase() === query || c.vin.toLowerCase() === query);
+    if(result){
+        alert(`Намерено: ${result.brandModel} | KM: ${result.km} | Механик: ${result.mechanic}`);
+    } else {
+        alert('Автомобилът не е намерен.');
+    }
 }
 
-searchInput.addEventListener('input', displayRecords);
-
-// initial load
-displayRecords();
+function searchHistory(){
+    const query = document.getElementById('searchHistoryInput').value.replace(/\s+/g,'').toLowerCase();
+    const resultsDiv = document.getElementById('historyResults');
+    resultsDiv.innerHTML = '';
+    const result = cars.find(c => c.regNumber.toLowerCase() === query || c.vin.toLowerCase() === query);
+    if(result){
+        let html = `<h3>${result.brandModel} (${result.regNumber})</h3>`;
+        html += `<p>Механик: ${result.mechanic} | Км: ${result.km}</p>`;
+        html += `<ul>`;
+        result.scans.forEach(s => {
+            html += `<li>${s.name} (${s.originalName})</li>`;
+        });
+        html += `</ul>`;
+        resultsDiv.innerHTML = html;
+    } else {
+        resultsDiv.innerHTML = '<p>Няма намерени резултати.</p>';
+    }
+}
