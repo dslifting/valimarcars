@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ValimarCars</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>ValimarCars</h1>
+    <img src="assets/ferrari-bg.jpg" alt="Ferrari Background" class="header-bg" />
+  </header>
+
+  <main>
+    <section id="form-section">
+      <h2>Add Vehicle Service</h2>
+      <form id="vehicle-form">
+        <label>Registration Number:<input type="text" id="regNumber" required /></label>
+        <label>VIN:<input type="text" id="vin" /></label>
+        <label>Kilometers:<input type="number" id="km" required /></label>
+        <label>Mechanic:<input type="text" id="mechanic" /></label>
+        <label>Services (Ctrl/Cmd + click to select multiple):</label>
+        <select id="services" multiple>
+          <option value="Oil Engine">Oil Engine</option>
+          <option value="Oil Transmission">Oil Transmission</option>
+          <option value="Oil Differential">Oil Differential</option>
+          <option value="Air Filter">Air Filter</option>
+          <option value="Fuel Filter">Fuel Filter</option>
+          <option value="Cabin Filter">Cabin Filter</option>
+          <option value="Tire Change">Tire Change</option>
+          <option value="AC Check">AC Check</option>
+          <option value="Other">Other</option>
+        </select>
+        <label>Notes:<textarea id="notes"></textarea></label>
+        <label>Upload Form:<input type="file" id="formFile" /></label>
+        <button type="submit">Add Service</button>
+      </form>
+    </section>
+
+    <section id="records-section">
+      <h2>Vehicle Records</h2>
+      <input type="text" id="search" placeholder="Search by reg number or VIN" />
+      <div id="records-list"></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
