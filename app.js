@@ -1,81 +1,81 @@
-// ==== app.js ====
-let cars = JSON.parse(localStorage.getItem('cars')) || [];
+let repairHistory = JSON.parse(localStorage.getItem('repairHistory')) || [];
 
-function generateFileName(regNumber) {
-    const date = new Date();
-    const yyyy = date.getFullYear();
-    const mm = String(date.getMonth() + 1).padStart(2, '0');
-    const dd = String(date.getDate()).padStart(2, '0');
-    const existing = cars.filter(c => c.regNumber === regNumber).length + 1;
-    return `${yyyy}-${mm}-${dd}-${regNumber}-${existing}`;
+// Навигация
+function showTab(tabName){
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(tabName).classList.add('active');
 }
 
-document.getElementById('carForm')?.addEventListener('submit', function(e){
-    e.preventDefault();
-    const carData = {
-        brandModel: document.getElementById('brandModel').value,
-        year: document.getElementById('year').value,
-        regNumber: document.getElementById('regNumber').value.replace(/\s+/g, ''),
-        km: document.getElementById('km').value,
-        vin: document.getElementById('vin').value,
-        engineCapacity: document.getElementById('engineCapacity').value,
-        power: document.getElementById('power').value,
-        fuel: document.getElementById('fuel').value,
-        services: Array.from(document.querySelectorAll('input[name="service"]:checked')).map(el => el.value),
-        otherNotes: document.getElementById('otherNotes').value,
-        mechanic: document.getElementById('mechanic').value,
-        scans: []
-    };
+// Запазване на ремонт
+function saveRepair(){
+    const date = document.getElementById('date').value;
+    const regNumber = document.getElementById('regNumber').value;
+    const vin = document.getElementById('vin').value;
+    const km = document.getElementById('km').value;
+    const brandModel = document.getElementById('brandModel').value;
+    const mechanic = document.getElementById('mechanic').value;
+    const services = Array.from(document.getElementById('services').selectedOptions).map(o=>o.value);
+    const notes = document.getElementById('notes').value;
 
-    const scanFile = document.getElementById('scanFile').files[0];
-    if(scanFile){
-        const fileName = generateFileName(carData.regNumber);
-        carData.scans.push({
-            name: fileName,
-            originalName: scanFile.name,
-            type: scanFile.type
-        });
-        alert(`Файлът ще се запази като: ${fileName}`);
-    }
+    // Сканирани файлове
+    const files = Array.from(document.getElementById('scanFiles').files).map(f => f.name);
 
-    const existingIndex = cars.findIndex(c => c.vin === carData.vin || c.regNumber === carData.regNumber);
-    if(existingIndex >= 0){
-        cars[existingIndex].scans.push(...carData.scans);
-        cars[existingIndex].services.push(...carData.services);
-    } else {
-        cars.push(carData);
-    }
+    repairHistory.push({date, regNumber, vin, km, brandModel, mechanic, services, notes, files});
+    localStorage.setItem('repairHistory', JSON.stringify(repairHistory));
 
-    localStorage.setItem('cars', JSON.stringify(cars));
-    alert('Данните са записани успешно!');
-    document.getElementById('carForm').reset();
-});
-
-function searchCar(){
-    const query = document.getElementById('searchInput').value.replace(/\s+/g,'').toLowerCase();
-    const result = cars.find(c => c.regNumber.toLowerCase() === query || c.vin.toLowerCase() === query);
-    if(result){
-        alert(`Намерено: ${result.brandModel} | KM: ${result.km} | Механик: ${result.mechanic}`);
-    } else {
-        alert('Автомобилът не е намерен.');
-    }
+    alert('Ремонтът е запазен!');
+    loadHistoryTable();
+    document.getElementById('repairForm').reset();
 }
 
-function searchHistory(){
-    const query = document.getElementById('searchHistoryInput').value.replace(/\s+/g,'').toLowerCase();
-    const resultsDiv = document.getElementById('historyResults');
-    resultsDiv.innerHTML = '';
-    const result = cars.find(c => c.regNumber.toLowerCase() === query || c.vin.toLowerCase() === query);
-    if(result){
-        let html = `<h3>${result.brandModel} (${result.regNumber})</h3>`;
-        html += `<p>Механик: ${result.mechanic} | Км: ${result.km}</p>`;
-        html += `<ul>`;
-        result.scans.forEach(s => {
-            html += `<li>${s.name} (${s.originalName})</li>`;
-        });
-        html += `</ul>`;
-        resultsDiv.innerHTML = html;
-    } else {
-        resultsDiv.innerHTML = '<p>Няма намерени резултати.</p>';
-    }
+// Зареждане на таблица
+function loadHistoryTable(){
+    const tbody = document.querySelector('#historyTable tbody');
+    tbody.innerHTML = '';
+    repairHistory.forEach(r=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${r.date}</td>
+            <td>${r.regNumber}</td>
+            <td>${r.vin}</td>
+            <td>${r.km}</td>
+            <td>${r.brandModel}</td>
+            <td>${r.mechanic}</td>
+            <td>${r.services.join(', ')}</td>
+            <td>${r.files.join(', ')}</td>
+        `;
+        tbody.appendChild(tr);
+    });
 }
+loadHistoryTable();
+
+// Excel експорт
+function exportToExcel(){
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(repairHistory);
+    XLSX.utils.book_append_sheet(wb, ws, "History");
+    XLSX.writeFile(wb, "ValimarCars_History.xlsx");
+}
+
+// Сканиране на няколко формуляра
+async function recognizeMultiple(){
+    const files = document.getElementById('scanFiles').files;
+    if(files.length === 0) { alert("Изберете поне един файл"); return; }
+
+    for(let i=0;i<files.length;i++){
+        const file = files[i];
+        const reader = new FileReader();
+        reader.onload = async function() {
+            const imgData = reader.result;
+            const { data: { text } } = await Tesseract.recognize(imgData, 'bul', { logger: m => console.log(m) });
+
+            // Прости regex за извличане
+            const regMatch = text.match(/рег[\.| |:]*(\S+)/i);
+            const vinMatch = text.match(/vin[\.| |:]*(\S+)/i);
+            const kmMatch = text.match(/км[\.| |:]*(\d+)/i);
+            const brandModelMatch = text.match(/Марка, модел[\.| ]*(.+)/i);
+
+            if(regMatch) document.getElementById('regNumber').value = regMatch[1];
+            if(vinMatch) document.getElementById('vin').value = vinMatch[1];
+            if(kmMatch) document.getElementById('km').value = kmMatch[1];
+            if(brandModelMatch) document.getElementById('brandModel').value =
